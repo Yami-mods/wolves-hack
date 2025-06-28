@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VIP Lottery Predictor - Chart Analyzer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <style>
+        body {
+  font-family: Arial, sans-serif;
+  background-color: #1a1a1a;
+  color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  background-color: #2a2a2a;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  max-width: 480px;
+  width: 90%;
+  box-sizing: border-box;
+  margin-top: 20px;
+  text-align: center;
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 30px;
+  color: #ffd700;
+}
+
+label {
+  display: block;
+  text-align: left;
+  margin: 12px 0 6px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+input[type="file"] {
+  padding: 5px;
+  background-color: #333;
+  color: #ccc;
+}
+
+button {
+  background-color: #ff4500;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #e03d00;
+}
+
+.output-box {
+  margin-top: 20px;
+  background-color: #333;
+  padding: 15px;
+  border-radius: 6px;
+  font-size: 18px;
+  color: #00ff00;
+  word-wrap: break-word;
+}
+
+.image-preview {
+  display: none;
+  max-width: 100%;
+  margin-top: 10px;
+  border-radius: 6px;
+}
+
+.error-msg {
+  color: #ff4d4d;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.whatsapp-btn {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 20px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.whatsapp-btn:hover {
+  background-color: #1ebe5b;
+}
+
+    </style>
+  <div class="container">
+    <h1>VIP 𝑾𝑶𝑳𝑽𝑬𝑺 Predictor</h1>
+
+    <label for="periodInput">Enter Period Number:</label>
+    <input type="text" id="periodInput" placeholder="e.g. 202506280041" autocomplete="off" />
+
+    <label for="fileInput">Or upload Wingo Chart Screenshot (PNG/JPG, min 300x300):</label>
+    <input type="file" id="fileInput" accept="image/png, image/jpeg" />
+
+    <button id="predictBtn">Predict Next Result</button>
+
+    <div class="error-msg" id="errorMsg"></div>
+    <div class="output-box" id="resultOutput">Prediction will appear here</div>
+    <img id="imgPreview" class="image-preview" alt="Uploaded Chart Preview" />
+  </div>
+
+  <a
+    href="https://wa.link/eph5ri"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="whatsapp-btn"
+    title="Join WhatsApp Group for 99% Accurate Signals"
+  >
+    Join WhatsApp Group for 99% Accurate Signals
+  </a>
+
+  <script>
+
+
+
+const predictBtn = document.getElementById('predictBtn');
+const resultOutput = document.getElementById('resultOutput');
+const fileInput = document.getElementById('fileInput');
+const imgPreview = document.getElementById('imgPreview');
+const errorMsg = document.getElementById('errorMsg');
+const periodInput = document.getElementById('periodInput');
+
+periodInput.addEventListener('input', () => {
+  errorMsg.textContent = '';
+  resultOutput.textContent = 'Prediction will appear here';
+  imgPreview.style.display = 'none';
+  fileInput.value = '';
+});
+
+fileInput.addEventListener('change', (e) => {
+  errorMsg.textContent = '';
+  resultOutput.textContent = 'Prediction will appear here';
+  periodInput.value = '';
+
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      errorMsg.textContent = 'Invalid file type! Please upload PNG or JPG image.';
+      imgPreview.style.display = 'none';
+      fileInput.value = '';
+      return;
+    }
+
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.src = objectUrl;
+
+    img.onload = function () {
+      if (img.width < 300 || img.height < 300) {
+        errorMsg.textContent = 'Image too small! Minimum size is 300x300 pixels.';
+        imgPreview.style.display = 'none';
+        fileInput.value = '';
+        URL.revokeObjectURL(objectUrl);
+        return;
+      }
+      imgPreview.src = objectUrl;
+      imgPreview.style.display = 'block';
+    };
+
+    img.onerror = function () {
+      errorMsg.textContent = 'Error loading image. Please try another file.';
+      imgPreview.style.display = 'none';
+      fileInput.value = '';
+      URL.revokeObjectURL(objectUrl);
+    };
+  } else {
+    imgPreview.style.display = 'none';
+    imgPreview.src = '';
+  }
+});
+
+predictBtn.onclick = async () => {
+  errorMsg.textContent = '';
+  resultOutput.textContent = '';
+
+  if (periodInput.value.trim() !== '') {
+    if (!/^\d{10,14}$/.test(periodInput.value.trim())) {
+      errorMsg.textContent = 'Please enter a valid period number (digits only).';
+      return;
+    }
+
+    const period = periodInput.value.trim();
+    try {
+      resultOutput.textContent = 'Predicting from period...';
+      const res = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'text', value: period }),
+      });
+
+      const data = await res.json();
+      resultOutput.textContent = `Period ${period} Prediction: ${data.prediction}`;
+    } catch (err) {
+      errorMsg.textContent = 'Error fetching prediction.';
+    }
+  } else if (fileInput.files.length > 0) {
+    const file = fileInput.files[0];
+    const formData = new FormData();
+    formData.append('type', 'image');
+    formData.append('file', file);
+
+    try {
+      resultOutput.textContent = 'Analyzing chart screenshot... Please wait.';
+      const res = await fetch('/api/predict', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      resultOutput.textContent = `AI Prediction from Chart: ${data.prediction}`;
+    } catch (err) {
+      errorMsg.textContent = 'Error fetching AI prediction.';
+    }
+  } else {
+    errorMsg.textContent = 'Please enter a period number or upload a valid chart screenshot.';
+  }
+};
+
+  
+  </script>
+</body>
+</html>
